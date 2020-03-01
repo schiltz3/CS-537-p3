@@ -70,6 +70,31 @@ walkpgdir(pde_t *pgdir, const void *va, int create)
   }
   return &pgtab[PTX(va)];
 }
+//TODO
+// change the protection bits of the page range starting at addr and of len
+// to be read only.
+int mprotect(void *addr, int len)
+{
+    pte_t *pte;
+    char *a;
+    a = PGROUNDDOWN(addr);
+    if(a != addr) return -1;
+    if(len <= 0) return -1;
+    for(int i = 0; i < len; i++) {
+        pte = walkpgdir(proc->pgdir, a, 0);
+        if(pte == 0) return -1;
+        if(!(*pte & PTE_P)) return -1;
+        a += PGSIZE;
+    }
+    a = PGROUNDDOWN(addr);
+    for(int i = 0; i < len; i++) {
+        pte = walkpgdir(proc->pgdir, a, 0);
+        *pte = *pte & ~PTE_W;
+        lcr3(PADDR(proc->pgdir));
+        a += PGSIZE;
+    }
+    return 0;
+}
 
 // Create PTEs for linear addresses starting at la that refer to
 // physical addresses starting at pa. la and size might not
@@ -95,6 +120,34 @@ mappages(pde_t *pgdir, void *la, uint size, uint pa, int perm)
     pa += PGSIZE;
   }
   return 0;
+}
+
+//This function set a region starting from addr with len length to both readable and writable
+//Return 0 upon success, else return -1
+int munprotect(void *addr, int len){
+    char* a = PGROUNDDOWN(addr);
+    if( a!= addr || len<1 || (uint) addr> USERTOP ){return -1;}//not align
+    if( (uint)(addr+ PGSIZE*len)> USERTOP){return -1; }//go beyound bound
+    pte_t *pte;
+    //going throught the range and check whether pte is present or not
+    for(int i = 0; i < len; i++) {
+        pte = walkpgdir(proc->pgdir, a, 0);
+        //cprintf("c, len = %d\n", len);
+        if(pte == 0) return -1;
+        if(!(*pte & PTE_P)) return -1;
+        //cprintf("before unprotect: %d\n", (uint)*pte);
+        a += PGSIZE;
+    }
+    //start another interation to set protection bit to 0
+    a = PGROUNDDOWN(addr);
+    for(int i = 0; i< len ; i++){
+         pte = walkpgdir( proc->pgdir, a , 0);
+         *pte = *pte |PTE_W ;
+         //cprintf("after unprotect: %d\n", (uint)*pte);
+         lcr3(PADDR(proc->pgdir));//flush base register
+         a += PGSIZE;
+    }
+    return 0;
 }
 
 // The mappings from logical to linear are one to one (i.e.,
