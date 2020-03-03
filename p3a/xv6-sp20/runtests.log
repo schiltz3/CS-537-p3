@@ -239,15 +239,15 @@ ld  -m    elf_i386 -nostdlib --omagic \
 dd if=/dev/zero of=xv6.img count=10000
 10000+0 records in
 10000+0 records out
-5120000 bytes (5.1 MB, 4.9 MiB) copied, 0.0202218 s, 253 MB/s
+5120000 bytes (5.1 MB, 4.9 MiB) copied, 0.020374 s, 251 MB/s
 dd if=kernel/bootblock of=xv6.img conv=notrunc
 1+0 records in
 1+0 records out
-512 bytes copied, 8.8225e-05 s, 5.8 MB/s
+512 bytes copied, 5.8436e-05 s, 8.8 MB/s
 dd if=kernel/kernel of=xv6.img seek=1 conv=notrunc
 257+1 records in
 257+1 records out
-131948 bytes (132 kB, 129 KiB) copied, 0.000504833 s, 261 MB/s
+131948 bytes (132 kB, 129 KiB) copied, 0.000512863 s, 257 MB/s
 gcc -c  -iquote include -Wall -Werror -ggdb  -o tools/mkfs.o tools/mkfs.c
 gcc  tools/mkfs.o -o tools/mkfs
 mkdir -p fs
@@ -316,26 +316,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --o
 cp user/bin/allocated_test fs/allocated_test
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-ls
-usertests
-init
 sh
-allocated_test
-ln
 fork_test
-mkdir
-grep
-test_protect
-rm
 README
-forktest
-tester
 cat
-stressfs
-zombie
+init
+usertests
 kill
-wc
+test_protect
+zombie
+ls
+ln
+rm
+allocated_test
+stressfs
 echo
+mkdir
+wc
+grep
+tester
+forktest
 balloc: first 469 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/ls user/bin/stressfs user/bin/grep user/bin/sh user/bin/tester user/bin/allocated_test user/bin/kill user/bin/fork_test user/bin/cat user/bin/mkdir user/bin/init user/bin/test_protect user/bin/rm user/bin/echo user/bin/ln user/bin/usertests user/bin/wc user/bin/zombie
@@ -362,26 +362,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --o
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-ls
-usertests
-init
 sh
-allocated_test
-ln
 fork_test
-mkdir
-grep
-test_protect
-rm
 README
-forktest
-tester
 cat
-stressfs
-zombie
+init
+usertests
 kill
-wc
+test_protect
+zombie
+ls
+ln
+rm
+allocated_test
+stressfs
 echo
+mkdir
+wc
+grep
+tester
+forktest
 balloc: first 471 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
@@ -404,7 +404,6 @@ pid 4 tester: trap 14 err 7 on cpu 0 eip 0xb9 addr 0x2000--kill proc
 write to an unprotected page
 TEST PASSED
 
-
 test mprotect_basic PASSED (5 of 5)
  (check whether mprotect work properly)
 
@@ -426,26 +425,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --o
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-ls
-usertests
-init
 sh
-allocated_test
-ln
 fork_test
-mkdir
-grep
-test_protect
-rm
 README
-forktest
-tester
 cat
-stressfs
-zombie
+init
+usertests
 kill
-wc
+test_protect
+zombie
+ls
+ln
+rm
+allocated_test
+stressfs
 echo
+mkdir
+wc
+grep
+tester
+forktest
 balloc: first 470 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
@@ -489,26 +488,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --o
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-ls
-usertests
-init
 sh
-allocated_test
-ln
 fork_test
-mkdir
-grep
-test_protect
-rm
 README
-forktest
-tester
 cat
-stressfs
-zombie
+init
+usertests
 kill
-wc
+test_protect
+zombie
+ls
+ln
+rm
+allocated_test
+stressfs
 echo
+mkdir
+wc
+grep
+tester
+forktest
 balloc: first 471 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
@@ -553,26 +552,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --o
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-ls
-usertests
-init
 sh
-allocated_test
-ln
 fork_test
-mkdir
-grep
-test_protect
-rm
 README
-forktest
-tester
 cat
-stressfs
-zombie
+init
+usertests
 kill
-wc
+test_protect
+zombie
+ls
+ln
+rm
+allocated_test
+stressfs
 echo
+mkdir
+wc
+grep
+tester
+forktest
 balloc: first 472 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
@@ -621,26 +620,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --o
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-ls
-usertests
-init
 sh
-allocated_test
-ln
 fork_test
-mkdir
-grep
-test_protect
-rm
 README
-forktest
-tester
 cat
-stressfs
-zombie
+init
+usertests
 kill
-wc
+test_protect
+zombie
+ls
+ln
+rm
+allocated_test
+stressfs
 echo
+mkdir
+wc
+grep
+tester
+forktest
 balloc: first 470 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
@@ -659,7 +658,6 @@ init: starting sh
 $ tester
 tester
 TEST PASSED
-
 
 test protect_error PASSED (5 of 5)
  (check the error handling of mprotect and munprotect)
@@ -682,26 +680,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --o
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-ls
-usertests
-init
 sh
-allocated_test
-ln
 fork_test
-mkdir
-grep
-test_protect
-rm
 README
-forktest
-tester
 cat
-stressfs
-zombie
+init
+usertests
 kill
-wc
+test_protect
+zombie
+ls
+ln
+rm
+allocated_test
+stressfs
 echo
+mkdir
+wc
+grep
+tester
+forktest
 balloc: first 470 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
@@ -726,30 +724,5 @@ test allocator_a FAILED (0 of 5)
  (test the alternate allocator in part 2)
  tester failed
 
-**********************************************************************
-Summary:
-test build PASSED
- (build xv6 using make)
-
-test mprotect_basic PASSED (5 of 5)
- (check whether mprotect work properly)
-
-test mprotect_fork PASSED (5 of 5)
- (check whether fork inherit the write bit from parent)
-
-test munprotect_basic PASSED (5 of 5)
- (check whether munprotect work properly)
-
-test test_protect PASSED (8 of 8)
- (check whether mprotect and munprotect work properly)
-
-test protect_error PASSED (5 of 5)
- (check the error handling of mprotect and munprotect)
-
-test allocator_a FAILED (0 of 5)
- (test the alternate allocator in part 2)
- tester failed
-
-Passed 6 of 7 tests.
-Overall 6 of 7
-Points 28 of 33
+Skipped 0 tests.
+To keep testing after failing a test, use flag '-c' or '--continue'
