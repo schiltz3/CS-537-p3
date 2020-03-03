@@ -1,7 +1,7 @@
 // Physical memory allocator, intended to allocate
 // memory for user processes, kernel stacks, page table pages,
 // and pipe buffers. Allocates 4096-byte pages.
-
+#include "rand.h"
 #include "types.h"
 #include "defs.h"
 #include "param.h"
@@ -17,7 +17,12 @@ struct {
   struct run *freelist;
 } kmem;
 
+
 extern char end[]; // first address after kernel loaded from ELF file
+
+uint allocated[512];
+int counter = 0;
+int free_number = 0;
 
 // Initialize free list of physical pages.
 void
@@ -50,7 +55,9 @@ kfree(char *v)
   r = (struct run*)v;
   r->next = kmem.freelist;
   kmem.freelist = r;
+  free_number++;
   release(&kmem.lock);
+
 }
 
 // Allocate one 4096-byte page of physical memory.
@@ -60,12 +67,39 @@ char*
 kalloc(void)
 {
   struct run *r;
-
+  struct run *temp;
   acquire(&kmem.lock);
   r = kmem.freelist;
-  if(r)
-    kmem.freelist = r->next;
+  if(r){
+    int x = xv6_rand();
+    int index = x % free_number;
+    for(int i = 0; i < index - 1; i++){
+      r = r->next;
+    }
+    
+    
+    if(index == 0){
+      temp = r;
+      kmem.freelist = r->next;
+    }else{
+      temp = r->next;
+      r->next = r->next->next;
+    }
+    allocated[counter] = (uint) temp;
+    counter++;
+  }
+  free_number --;
   release(&kmem.lock);
-  return (char*)r;
+  return (char*) temp;
 }
 
+int dump_allocated(int *frames, int numframes) {
+    if(frames == 0 || numframes <= 0 || numframes > counter)
+      return -1;
+    
+    for(int i = 0; i < numframes; i++){
+      frames[i] = allocated[counter-i-1];
+    }
+
+    return 0 ;
+}
