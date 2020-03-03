@@ -17,6 +17,15 @@ struct {
   struct run *freelist;
 } kmem;
 
+typedef struct allolist{
+    struct allolist* next;  //a ptr to the head of an allocated list
+    int addr;
+} allolist;
+
+int allo_sz; //size of the allocated list
+allolist* head;
+allolist* new;
+
 extern char end[]; // first address after kernel loaded from ELF file
 
 // Initialize free list of physical pages.
@@ -29,6 +38,10 @@ kinit(void)
   p = (char*)PGROUNDUP((uint)end);
   for(; p + PGSIZE <= (char*)PHYSTOP; p += PGSIZE)
     kfree(p);
+
+  head->addr  = NULL;
+  head-> next = NULL;
+  allo_sz = 0 ;
 }
 
 // Free the page of physical memory pointed at by v,
@@ -51,6 +64,8 @@ kfree(char *v)
   r->next = kmem.freelist;
   kmem.freelist = r;
   release(&kmem.lock);
+
+  
 }
 
 // Allocate one 4096-byte page of physical memory.
@@ -69,3 +84,13 @@ kalloc(void)
   return (char*)r;
 }
 
+int dump_allocated(int *frames, int numframes) {
+    if( numframes > allo_sz) return -1;
+
+    allolist * curr = head;
+    for( int i=0; i< numframes; i++){
+        *(frames+i) = curr->addr;
+        curr= curr -> next;
+    }
+    return 0 ;
+}
