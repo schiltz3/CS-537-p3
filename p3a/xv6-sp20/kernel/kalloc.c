@@ -20,6 +20,9 @@ struct {
 
 extern char end[]; // first address after kernel loaded from ELF file
 
+uint allocated[512];
+int counter = 0;
+
 // Initialize free list of physical pages.
 void
 kinit(void)
@@ -31,9 +34,6 @@ kinit(void)
   for(; p + PGSIZE <= (char*)PHYSTOP; p += PGSIZE)
     kfree(p);
 
-  // head->addr  = NULL;
-  // head-> next = NULL;
-  // allo_sz = 0 ;
 }
 
 // Free the page of physical memory pointed at by v,
@@ -69,19 +69,22 @@ kalloc(void)
 
   acquire(&kmem.lock);
   r = kmem.freelist;
-  if(r)
+  if(r){
     kmem.freelist = r->next->next;
+    allocated[counter] = (uint) r;
+    counter++;
+  }
   release(&kmem.lock);
   return (char*)r;
 }
 
 int dump_allocated(int *frames, int numframes) {
-    // if( numframes > allo_sz) return -1;
+    if(frames == 0 || numframes <= 0 || numframes > counter)
+      return -1;
+    
+    for(int i = 0; i < numframes; i++){
+      frames[i] = allocated[counter-i-1];
+    }
 
-    // allolist * curr = head;
-    // for( int i=0; i< numframes; i++){
-    //     *(frames+i) = curr->addr;
-    //     curr= curr -> next;
-    // }
     return 0 ;
 }
