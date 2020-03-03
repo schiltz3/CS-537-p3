@@ -33,7 +33,7 @@ kinit(void)
   p = (char*)PGROUNDUP((uint)end);
   for(; p + PGSIZE <= (char*)PHYSTOP; p += PGSIZE)
     kfree(p);
-
+  
 }
 
 // Free the page of physical memory pointed at by v,
