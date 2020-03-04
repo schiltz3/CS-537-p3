@@ -77,28 +77,32 @@ walkpgdir(pde_t *pgdir, const void *va, int create)
 int mprotect(void *addr, int len)
 {
   pte_t *pte;
-  char *a;
-  a = PGROUNDDOWN(addr);
-  if (a != addr)
+    if ((uint)addr > USERTOP)
+  {
     return -1;
+  } //not align
+  if ((uint)(addr + PGSIZE * len) > USERTOP)
+  {
+    return -1;
+  } 
+
+  if(((int) addr % PGSIZE) != 0){
+    return -1;
+  }
   if (len <= 0)
     return -1;
-  for (int i = 0; i < len; i++)
-  {
-    pte = walkpgdir(proc->pgdir, a, 0);
-    if (pte == 0)
-      return -1;
-    if (!(*pte & PTE_P))
-      return -1;
-    a += PGSIZE;
-  }
-  a = PGROUNDDOWN(addr);
-  for (int i = 0; i < len; i++)
-  {
-    pte = walkpgdir(proc->pgdir, a, 0);
-    *pte = *pte & ~PTE_W;
-    lcr3(PADDR(proc->pgdir));
-    a += PGSIZE;
+  pte = walkpgdir(proc->pgdir, addr, 0);
+  if(*pte){
+    for (int i = (int)addr; i < ((int) addr + (len) *PGSIZE) ; i += PGSIZE)
+   {
+      pte = walkpgdir(proc->pgdir, (void*) i, 0);
+      if( ((*pte & PTE_U) != 0) && ((*pte & PTE_P) != 0) ){
+        *pte = *pte & ~PTE_W;
+        lcr3(PADDR(proc->pgdir));
+      }else{
+        return -1;
+      }
+    }
   }
   return 0;
 }
@@ -134,8 +138,13 @@ mappages(pde_t *pgdir, void *la, uint size, uint pa, int perm)
 //Return 0 upon success, else return -1
 int munprotect(void *addr, int len)
 {
-  char *a = PGROUNDDOWN(addr);
-  if (a != addr || len < 1 || (uint)addr > USERTOP)
+  if(((int) addr % PGSIZE) != 0){
+    return -1;
+  }
+  if (len <= 0)
+    return -1;
+  
+  if ((uint)addr > USERTOP)
   {
     return -1;
   } //not align
@@ -144,23 +153,18 @@ int munprotect(void *addr, int len)
     return -1;
   } //go beyound bound
   pte_t *pte;
-  for (int i = 0; i < len; i++)
-  {
-    pte = walkpgdir(proc->pgdir, a, 0);
-    if (pte == 0)
-      return -1;
-    if (!(*pte & PTE_P))
-      return -1;
-    a += PGSIZE;
-  }
-  //start another interation to set protection bit to 0
-  a = PGROUNDDOWN(addr);
-  for (int i = 0; i < len; i++)
-  {
-    pte = walkpgdir(proc->pgdir, a, 0);
-    *pte = *pte | PTE_W;
-    lcr3(PADDR(proc->pgdir)); //flush base register
-    a += PGSIZE;
+  pte = walkpgdir(proc->pgdir, addr, 0);
+  if(*pte){
+    for (int i = (int)addr; i < ((int) addr + (len) *PGSIZE) ; i += PGSIZE)
+    {
+      pte = walkpgdir(proc->pgdir, (void*)i, 0);
+      if( ((*pte & PTE_U) != 0) && ((*pte & PTE_P) != 0) ){
+          *pte = *pte | PTE_W;
+         lcr3(PADDR(proc->pgdir)); //flush base register
+      }else{
+       return -1;
+      }
+    }
   }
   return 0;
 }
