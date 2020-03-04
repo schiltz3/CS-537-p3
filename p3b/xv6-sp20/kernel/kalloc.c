@@ -77,7 +77,6 @@ kalloc(void)
       r = r->next;
     }
     
-    
     if(index == 0){
       temp = r;
       kmem.freelist = r->next;
