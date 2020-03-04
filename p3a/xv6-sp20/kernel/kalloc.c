@@ -52,11 +52,12 @@ kfree(char *v)
 
   acquire(&kmem.lock);
   r = (struct run*)v;
-  if(init_done == 0){
+  if(init_done == 0 || (PADDR(r) + PGSIZE) > 0xFFFFFFFF){
     r->next = kmem.freelist;
   }else{
     r->next = (struct run*)(PADDR(r) + PGSIZE);
-    r->next->next = kmem.freelist;
+    if(r->next != 0)
+      r->next->next = kmem.freelist;
   }
   kmem.freelist = r;
   release(&kmem.lock);
